@@ -1,21 +1,23 @@
 # Debt Dynamics — Replication of Hennessy & Whited (2005)
 
-A MATLAB implementation of **Hennessy and Whited (2005), "Debt Dynamics,"** *Journal of Finance*, Vol. 60, No. 3, pp. 1129–1165. The code solves the dynamic model of the levered firm with endogenous investment, financing, savings, and equity issuance, then simulates a panel of firms and compares simulated moments with the moments reported in the paper (Table II), using the structural parameters of Table III.
+A MATLAB implementation of **Hennessy and Whited (2005), "Debt Dynamics,"** *Journal of Finance*, Vol. 60, No. 3, pp. 1129–1165. The code solves the dynamic model of the levered firm with endogenous investment, financing, savings, and equity issuance, simulates a panel of firms, and computes the corresponding simulated moments, following the model and the structural parameters (Table III) of the paper.
 
 ## Files
 
+All MATLAB files below live in the `code/` folder. Pre-run outputs (results and figures) are in `results/`.
+
 | File | Purpose |
 |---|---|
-| `run_hw2005_with_paper_params.m` | Main script. Builds the state space, runs value function iteration (VFI), simulates the firm panel, computes moments, prints a Table II comparison, saves results, and plots actual vs. simulated moments. |
-| `config_hw2005.m` | Configuration for four modes: `test`, `fast`, `paper`, `full`. |
-| `build_state_space.m` | Constructs the capital, debt, and productivity grids, including the collateral upper bound. |
-| `solve_vfi_fast.m` | Value function iteration with policy-function updates; returns convergence history. |
-| `simulate_firms.m` | Simulates S panels of N firms over T periods and records the panel used for moments. |
-| `compute_moments.m` | Computes the 10 simulated moments (investment, debt, equity issuance, Q sensitivities, AR(1) and shock SD of income). |
-| `corporate_tax.m` | Convex marginal tax rate and tax bill as specified in the paper (Assumption 6). |
-| `tauchen86.m` | Discretization of the AR(1) productivity process (Tauchen 1986). |
-| `diagnose_Q.m` | Optional diagnostic script for the investment–Q sensitivity. |
-| `generate_report_figures.m` | Generates report figures: VFI convergence, policy distributions, summary table, policy functions, and the Table II moment comparison. |
+| `code/run_hw2005_with_paper_params.m` | Main script. Builds the state space, runs value function iteration (VFI), simulates the firm panel, computes moments, prints a Table II comparison, saves results, and plots actual vs. simulated moments. |
+| `code/config_hw2005.m` | Configuration for four modes: `test`, `fast`, `paper`, `full`. |
+| `code/build_state_space.m` | Constructs the capital, debt, and productivity grids, including the collateral upper bound. |
+| `code/solve_vfi_fast.m` | Value function iteration with policy-function updates; returns convergence history. |
+| `code/simulate_firms.m` | Simulates S panels of N firms over T periods and records the panel used for moments. |
+| `code/compute_moments.m` | Computes the 10 simulated moments (investment, debt, equity issuance, Q sensitivities, AR(1) and shock SD of income). |
+| `code/corporate_tax.m` | Convex marginal tax rate and tax bill as specified in the paper (Assumption 6). |
+| `code/tauchen86.m` | Discretization of the AR(1) productivity process (Tauchen 1986). |
+| `code/diagnose_Q.m` | Optional diagnostic script for the investment–Q sensitivity. |
+| `code/generate_report_figures.m` | Generates report figures: VFI convergence, policy distributions, summary table, policy functions, and the Table II moment comparison. |
 
 ## Requirements
 
@@ -24,7 +26,7 @@ A MATLAB implementation of **Hennessy and Whited (2005), "Debt Dynamics,"** *Jou
 
 ## How to run
 
-Open MATLAB, `cd` into this folder, and run:
+Open MATLAB, `cd` into the `code/` folder, and run:
 
 ```matlab
 run_hw2005_with_paper_params
@@ -41,7 +43,7 @@ The main script is configured with `RUN_MODE = 'paper'`, which replicates the pa
 | `paper` | 21 × 100 × 20 | ~1–3 h | Full replication of Table II |
 | `full` | 21 × 100 × 20 | long | SMM estimation (simulated annealing) |
 
-To switch modes, edit `RUN_MODE` in `run_hw2005_with_paper_params.m`.
+To switch modes, edit `RUN_MODE` in `code/run_hw2005_with_paper_params.m`.
 
 After the main script finishes, report figures can be generated with:
 
@@ -53,7 +55,9 @@ This script loads the variables from the workspace (`V`, `k_idx_pol`, `p_idx_pol
 
 ## Results
 
-The paper-standard grid (`paper` mode, `rng(42)`) reproduces the main moments of Table II. A comparison table is printed at the end of the run and the simulated moments are saved to `hw2005_paper_results.mat` together with the policy functions, value function, grids, and panel.
+The paper-standard grid (`paper` mode, `rng(42)`) solves the model and produces the full set of simulated moments, saved to `results/hw2005_paper_results.mat` together with the policy functions, value function, grids, and panel. A comparison table is printed at the end of the run, and the moments are shown against the paper's Table II in `results/hw2005_paper_moments.png`.
+
+**Replication fidelity.** The model solution and simulation pipeline are stable and reproducible (identical moments across runs with a fixed seed), but the simulated moments deviate from the moments reported in Table II of the paper. The largest gaps are in debt and equity issuance (`Mean(net debt/A)` ≈ 0.010 vs. 0.127 in the paper; `Freq(eq issuance)` ≈ 0.019 vs. 0.091) and in the income dynamics (`SD(shock income/A)` ≈ 0.027 vs. 0.117). These gaps are discussed in the next section and largely reflect deliberate departures in how the moments are constructed on the short simulated panel. This repository should therefore be read as a faithful implementation of the model's numerical machinery, not as a claim to have reproduced the paper's exact moment values.
 
 **Notes on comparability with the paper:**
 
@@ -72,7 +76,7 @@ The following choices were made during development and are deliberately kept, as
 
 - Random seed is fixed (`rng(42)`) at the start of the main script.
 - No randomization inside the VFI; only the firm-panel simulation draws shocks.
-- Results are saved as `hw2005_paper_results.mat` (MAT-file v7.3).
+- Results are saved as `results/hw2005_paper_results.mat` (MAT-file v7.3).
 
 ## Reference
 
