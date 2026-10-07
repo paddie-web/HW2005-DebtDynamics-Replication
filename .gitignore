@@ -1,0 +1,8 @@
+# MATLAB generated files
+*.mat
+
+# Generated figures (optional to commit; re-run generate_report_figures.m to recreate)
+# *.png
+
+# macOS
+.DS_Store
